@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import User from '../../models/buyer/userModel.js';
-import generateToken from '../../utils/generateToken.js';
+import generateToken from '../../utils/generateUserToken.js';
+import cloudinary from '../../utils/cloudinary.js'
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -17,6 +18,8 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar:user.avatar,
+      phoneNumber: user.phoneNumber
     });
   } else {
     res.status(401);
@@ -29,6 +32,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, phoneNumber, email, password } = req.body;
+  // const avatar = req.file;
 
   const userExists = await User.findOne({ email });
 
@@ -36,27 +40,57 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('User already exists');
   }
-
-  const user = await User.create({
-    name,
-    username,
-    phoneNumber,
-    email,
-    password,
-  });
-
-  if (user) {
-    generateToken(res, user._id);
-
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+  // const result = await cloudinary(req.file.path);
+  // avatar = result.secure_url;
+  if (req.file) {
+    const avatar = (await cloudinary(req.file.path)).secure_url
+    const user = await User.create({
+      avatar,
+      name,
+      username,
+      phoneNumber,
+      email,
+      password,
+      
     });
+  
+    if (user) {
+      generateToken(res, user._id);
+  
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar:user.avatar,
+        phoneNumber: user.phoneNumber
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid user data');
+    }
   } else {
-    res.status(400);
-    throw new Error('Invalid user data');
+    const user = await User.create({
+      name,
+      username,
+      phoneNumber,
+      email,
+      password,
+    });
+  
+    if (user) {
+      generateToken(res, user._id);
+  
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid user data');
+    }
   }
+  
 });
 
 // @desc    Logout user / clear cookie
@@ -82,7 +116,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      username: user.username
+      username: user.username,
+      avatar: user.avatar
     });
   } else {
     res.status(404);
@@ -101,6 +136,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.email = req.body.email || user.email;
     user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
     user.username = req.body.username;
+    if (req.file) {
+      const result = await cloudinary(req.file.path);
+      farm.avatar = result.secure_url;}
 
     if (req.body.password) {
       user.password = req.body.password;
@@ -111,7 +149,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
+      username: updatedUser.username,
       email: updatedUser.email,
+      phoneNumber: user.phoneNumber,
+      username: user.username,
+      avatar: updatedUser.avatar
     });
   } else {
     res.status(404);

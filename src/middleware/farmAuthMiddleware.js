@@ -1,11 +1,13 @@
 import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import Farm from '../models/farms/farmerModel.js';
+import FarmProduct from '../models/farms/farmProductModel.js';
 
-const protect = asyncHandler(async (req, res, next) => {
+const farmer = asyncHandler(async (req, res, next) => {
   let token;
 
   token = req.cookies.jwt;
+  // console.log(token)
 
   if (token) {
     try {
@@ -21,8 +23,56 @@ const protect = asyncHandler(async (req, res, next) => {
     }
   } else {
     res.status(401);
-    throw new Error('Not authorized, no token');
+    throw new Error('Not a farmer so not authorized, no token');
   }
 });
 
-export { protect };
+// Middleware to check if the logged-in user is the product owner
+async function checkFarmProductOwnership(req, res, next) {
+  const productId = req.params.id;
+  const farmId = req.farm.id;
+
+  try {
+    const product = await FarmProduct.findById(productId);
+
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    if (product.userId !== farmId) {
+      return res.status(403).json({ error: 'You are not the owner of this product' });
+    }
+
+    // If the user owns the product, proceed to the next middleware
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'An error occurred while fetching the product' });
+  }
+}
+
+
+
+// function checkFarmProductOwnership(req, res, next) {
+//   const productId = req.params.productId;
+//   const farmId = req.farm.id;
+
+//   // Replace this with your actual database query to fetch the product by ID
+//   const product = FarmProduct.findById(productId);
+//   console.log(product.userId)
+//   console.log(farmId)
+
+//   if (!product) {
+//     return res.status(404).json({ error: 'Product not found' });
+//   }
+
+//   if (product.userId !== farmId) {
+//     return res.status(403).json({ error: 'You are not the owner of this product' });
+//   }
+
+//   // If the user owns the product, proceed to the next middleware
+//   next();
+// }
+
+export { farmer, checkFarmProductOwnership};

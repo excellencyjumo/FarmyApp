@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Logistics from '../../models/logistics/logisticsModel.js';
-import generateToken from '../../utils/generateToken.js';
+import cloudinary from '../../utils/cloudinary.js';
+import generateToken from '../../utils/generateLogToken.js';
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -36,6 +37,8 @@ const registerLogistics = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error('logistics company already exists');
     }
+    const result = await cloudinary(req.file.path);
+    avatar = result.secure_url;
   
     const logistics = await Logistics.create({
       logisticsName,
@@ -45,6 +48,7 @@ const registerLogistics = asyncHandler(async (req, res) => {
       username,
       phoneNumber,
       password,
+      avatar
     });
   
     if (logistics) {

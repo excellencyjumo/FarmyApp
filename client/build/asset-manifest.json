@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/static/css/main.8bd7df0d.css",
+    "main.js": "/static/js/main.bfdf522c.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "static/media/back.jpg": "/static/media/back.6545eea463304f284336.jpg",
+    "static/media/FARMY EMB white..png": "/static/media/FARMY EMB white..5342f915a1aaae9214f5.png",
+    "static/media/FARMY EMB green..png": "/static/media/FARMY EMB green..4ebf4f7867bd81a1a1bb.png",
+    "index.html": "/index.html",
+    "main.8bd7df0d.css.map": "/static/css/main.8bd7df0d.css.map",
+    "main.bfdf522c.js.map": "/static/js/main.bfdf522c.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8bd7df0d.css",
+    "static/js/main.bfdf522c.js"
+  ]
+}

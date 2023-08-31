@@ -24,19 +24,39 @@ const storeSchema = mongoose.Schema(
         type: String,
         unique:true
     },
+    slug: {
+      type: String,
+      unique:true
+      },
     phoneNumber: {
         type: String,
         unique: true
+    },
+    avatar: {
+      type: String
     },
     password: {
       type: String,
       required: true,
     },
+    // location: {
+    //   type: {
+    //     type: String,
+    //     enum: ["Point"],
+    //     required: false,
+    //   },
+    //   coordinates: {
+    //     type: [Number],
+    //     required: false,
+    //   },
+    // },
   },
   {
     timestamps: true,
   }
 );
+
+// storeSchema.index({ location: "2dsphere" });
 
 // Match user entered password to hashed password in database
 storeSchema.methods.matchPassword = async function (enteredPassword) {
