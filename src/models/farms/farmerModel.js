@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const farmSchema = mongoose.Schema(
   {
@@ -8,12 +8,12 @@ const farmSchema = mongoose.Schema(
       required: true,
     },
     farmAddress: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -21,33 +21,33 @@ const farmSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
       // required: true,
     },
     // one of the following 4 will be filled, or the password field is available
-		googleID: {
-			type: String,
-		},
-		githubID: {
-			type: String,
-		},
-		twitterID: {
-			type: String,
-		},
-		linkedinID: {
-			type: String,
-		},
+    googleID: {
+      type: String,
+    },
+    githubID: {
+      type: String,
+    },
+    twitterID: {
+      type: String,
+    },
+    linkedinID: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -60,8 +60,8 @@ farmSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 // Encrypt password using bcrypt
-farmSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+farmSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -69,6 +69,6 @@ farmSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Farm = mongoose.model('Farm', farmSchema);
+const Farm = mongoose.model("Farm", farmSchema);
 
 export default Farm;

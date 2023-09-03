@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const storeSchema = mongoose.Schema(
   {
@@ -8,12 +8,12 @@ const storeSchema = mongoose.Schema(
       required: true,
     },
     storeAddress: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -21,19 +21,19 @@ const storeSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     slug: {
       type: String,
-      unique:true
-      },
+      unique: true,
+    },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
@@ -64,8 +64,8 @@ storeSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 // Encrypt password using bcrypt
-storeSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+storeSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -73,6 +73,6 @@ storeSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Store = mongoose.model('Store', storeSchema);
+const Store = mongoose.model("Store", storeSchema);
 
 export default Store;

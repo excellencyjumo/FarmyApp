@@ -1,48 +1,48 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const farmProductSchema = mongoose.Schema(
   {
     userId: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     productName: {
       type: String,
       required: true,
     },
     productDescription: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     measuringScale: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     perUnitPrice: {
       type: String,
       required: true,
     },
     images: {
-        type: Array,
+      type: Array,
     },
     availabilityDate: {
-        type: Date,
+      type: Date,
     },
-    availableQuantity:{
-        type: String
+    availableQuantity: {
+      type: String,
     },
     numReviews: {
-        type: Number
+      type: Number,
     },
     rating: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   {
     timestamps: true,
   }
 );
 farmProductSchema.index({ userId: 1, productName: 1 }, { unique: true });
-const FarmProduct = mongoose.model('FarmProduct', farmProductSchema);
+const FarmProduct = mongoose.model("FarmProduct", farmProductSchema);
 
 export default FarmProduct;

@@ -1,7 +1,7 @@
-import asyncHandler from 'express-async-handler';
-import User from '../../models/buyer/userModel.js';
-import generateToken from '../../utils/generateUserToken.js';
-import cloudinary from '../../utils/cloudinary.js'
+import asyncHandler from "express-async-handler";
+import User from "../../models/buyer/userModel.js";
+import generateToken from "../../utils/generateUserToken.js";
+import cloudinary from "../../utils/cloudinary.js";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -18,12 +18,12 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      avatar:user.avatar,
-      phoneNumber: user.phoneNumber
+      avatar: user.avatar,
+      phoneNumber: user.phoneNumber,
     });
   } else {
     res.status(401);
-    throw new Error('Invalid email or password');
+    throw new Error("Invalid email or password");
   }
 });
 
@@ -38,12 +38,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (userExists) {
     res.status(400);
-    throw new Error('User already exists');
+    throw new Error("User already exists");
   }
   // const result = await cloudinary(req.file.path);
   // avatar = result.secure_url;
   if (req.file) {
-    const avatar = (await cloudinary(req.file.path)).secure_url
+    const avatar = (await cloudinary(req.file.path)).secure_url;
     const user = await User.create({
       avatar,
       name,
@@ -51,22 +51,21 @@ const registerUser = asyncHandler(async (req, res) => {
       phoneNumber,
       email,
       password,
-      
     });
-  
+
     if (user) {
       generateToken(res, user._id);
-  
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatar:user.avatar,
-        phoneNumber: user.phoneNumber
+        avatar: user.avatar,
+        phoneNumber: user.phoneNumber,
       });
     } else {
       res.status(400);
-      throw new Error('Invalid user data');
+      throw new Error("Invalid user data");
     }
   } else {
     const user = await User.create({
@@ -76,10 +75,10 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       password,
     });
-  
+
     if (user) {
       generateToken(res, user._id);
-  
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
@@ -87,21 +86,20 @@ const registerUser = asyncHandler(async (req, res) => {
       });
     } else {
       res.status(400);
-      throw new Error('Invalid user data');
+      throw new Error("Invalid user data");
     }
   }
-  
 });
 
 // @desc    Logout user / clear cookie
 // @route   POST /api/users/logout
 // @access  Public
 const logoutUser = (req, res) => {
-  res.cookie('jwt', '', {
+  res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
 // @desc    Get user profile
@@ -117,11 +115,11 @@ const getUserProfile = asyncHandler(async (req, res) => {
       email: user.email,
       phoneNumber: user.phoneNumber,
       username: user.username,
-      avatar: user.avatar
+      avatar: user.avatar,
     });
   } else {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 });
 
@@ -138,7 +136,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.username = req.body.username;
     if (req.file) {
       const result = await cloudinary(req.file.path);
-      farm.avatar = result.secure_url;}
+      farm.avatar = result.secure_url;
+    }
 
     if (req.body.password) {
       user.password = req.body.password;
@@ -153,11 +152,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       phoneNumber: user.phoneNumber,
       username: user.username,
-      avatar: updatedUser.avatar
+      avatar: updatedUser.avatar,
     });
   } else {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 });
 export {

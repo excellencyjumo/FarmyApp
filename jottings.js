@@ -3,16 +3,16 @@ import React, { useState } from "react";
 export default function App() {
   const [image, setImage] = useState({ preview: "", raw: "" });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     if (e.target.files.length) {
       setImage({
         preview: URL.createObjectURL(e.target.files[0]),
-        raw: e.target.files[0]
+        raw: e.target.files[0],
       });
     }
   };
 
-  const handleUpload = async e => {
+  const handleUpload = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("image", image.raw);
@@ -20,9 +20,9 @@ export default function App() {
     await fetch("YOUR_URL", {
       method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data"
+        "Content-Type": "multipart/form-data",
       },
-      body: formData
+      body: formData,
     });
   };
 
