@@ -8,12 +8,12 @@ const storeSchema = mongoose.Schema(
       required: true,
     },
     storeAddress: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -21,23 +21,32 @@ const storeSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     slug: {
       type: String,
-      unique:true
-      },
+      unique: true,
+    },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
       required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+      default: 'store',
+    },
+    currentSocketId: {
+      type: String,
+      required: false,
     },
     // location: {
     //   type: {

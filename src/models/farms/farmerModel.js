@@ -8,12 +8,12 @@ const farmSchema = mongoose.Schema(
       required: true,
     },
     farmAddress: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -21,33 +21,42 @@ const farmSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
       // required: true,
     },
     // one of the following 4 will be filled, or the password field is available
-		googleID: {
-			type: String,
-		},
-		githubID: {
-			type: String,
-		},
-		twitterID: {
-			type: String,
-		},
-		linkedinID: {
-			type: String,
-		},
+    googleID: {
+      type: String,
+    },
+    githubID: {
+      type: String,
+    },
+    twitterID: {
+      type: String,
+    },
+    linkedinID: {
+      type: String,
+    },
+    type: {
+      type: String,
+      required: true,
+      default: 'farm',
+    },
+    currentSocketId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

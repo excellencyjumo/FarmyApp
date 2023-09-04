@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import User from '../../models/buyer/userModel.js';
 import generateToken from '../../utils/generateUserToken.js';
-import cloudinary from '../../utils/cloudinary.js'
+import cloudinary from '../../utils/cloudinary.js';
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -12,14 +12,17 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
+    const token = generateToken(res, user._id);
 
-    res.json({
+    res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      avatar:user.avatar,
-      phoneNumber: user.phoneNumber
+      avatar: user.avatar,
+      phoneNumber: user.phoneNumber,
+      token,
+      username: user.username,
+      type: user.type
     });
   } else {
     res.status(401);
@@ -43,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // const result = await cloudinary(req.file.path);
   // avatar = result.secure_url;
   if (req.file) {
-    const avatar = (await cloudinary(req.file.path)).secure_url
+    const avatar = (await cloudinary(req.file.path)).secure_url;
     const user = await User.create({
       avatar,
       name,
@@ -51,18 +54,17 @@ const registerUser = asyncHandler(async (req, res) => {
       phoneNumber,
       email,
       password,
-      
     });
-  
+
     if (user) {
       generateToken(res, user._id);
-  
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatar:user.avatar,
-        phoneNumber: user.phoneNumber
+        avatar: user.avatar,
+        phoneNumber: user.phoneNumber,
       });
     } else {
       res.status(400);
@@ -76,10 +78,10 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       password,
     });
-  
+
     if (user) {
       generateToken(res, user._id);
-  
+
       res.status(201).json({
         _id: user._id,
         name: user.name,
@@ -90,7 +92,6 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error('Invalid user data');
     }
   }
-  
 });
 
 // @desc    Logout user / clear cookie
@@ -117,7 +118,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       email: user.email,
       phoneNumber: user.phoneNumber,
       username: user.username,
-      avatar: user.avatar
+      avatar: user.avatar,
     });
   } else {
     res.status(404);
@@ -138,7 +139,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.username = req.body.username;
     if (req.file) {
       const result = await cloudinary(req.file.path);
-      farm.avatar = result.secure_url;}
+      farm.avatar = result.secure_url;
+    }
 
     if (req.body.password) {
       user.password = req.body.password;
@@ -153,7 +155,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       phoneNumber: user.phoneNumber,
       username: user.username,
-      avatar: updatedUser.avatar
+      avatar: updatedUser.avatar,
     });
   } else {
     res.status(404);

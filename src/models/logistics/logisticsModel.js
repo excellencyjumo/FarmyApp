@@ -8,12 +8,12 @@ const logisticsSchema = mongoose.Schema(
       required: true,
     },
     logisticsAddress: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -21,19 +21,28 @@ const logisticsSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
       required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+      default: 'logistics',
+    },
+    currentSocketId: {
+      type: String,
+      required: false,
     },
   },
   {
