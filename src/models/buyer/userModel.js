@@ -13,19 +13,28 @@ const userSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
       required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+      default: 'user',
+    },
+    currentSocketId: {
+      type: String,
+      required: false,
     },
   },
   {
