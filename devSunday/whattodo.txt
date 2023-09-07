@@ -1,0 +1,15 @@
+Tasks to be performed, test on the endpoints
+and make corrections to endpoints that are not 
+working and Allowing all users do Google authentication
+and be to do forget Password with their email using 
+email to send them the mail to change their password With.
+
+
+860352040213-22jt5e8boq43idpdrcv893doqriqpone.apps.googleusercontent.com
+
+
+What I do.
+The break down 
+* Create Branch and create Folder when I put all my code and I do the registration with Google API
+so can be able to create Credentials to run the api with Google 
+and install the necessary package and dependencies.

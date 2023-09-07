@@ -39,6 +39,15 @@ const storeSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+      default: 'store',
+    },
+    currentSocketId: {
+      type: String,
+      required: false,
+    },
     // location: {
     //   type: {
     //     type: String,

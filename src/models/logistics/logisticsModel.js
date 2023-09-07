@@ -35,6 +35,15 @@ const logisticsSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+      default: 'logistics',
+    },
+    currentSocketId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

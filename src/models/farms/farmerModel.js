@@ -28,6 +28,12 @@ const farmSchema = mongoose.Schema(
       type: String,
       unique: true,
     },
+    token: {
+      type: String,
+    },
+    tokenExpire: {
+      type: Date,
+    },
     avatar: {
       type: String,
     },
