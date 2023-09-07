@@ -11,6 +11,12 @@ const storeSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    token: {
+      type: String,
+    },
+    tokenExpire: {
+      type: Date,
+    },
     city: {
       type: String,
       required: true,

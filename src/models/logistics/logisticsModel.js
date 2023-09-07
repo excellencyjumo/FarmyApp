@@ -35,10 +35,16 @@ const logisticsSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    token: {
+      type: String,
+    },
+    tokenExpire: {
+      type: Date,
+    },
     type: {
       type: String,
       required: true,
-      default: 'logistics',
+      default: "logistics",
     },
     currentSocketId: {
       type: String,

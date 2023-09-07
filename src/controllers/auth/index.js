@@ -4,6 +4,7 @@ import AppError from "../../utils/error.js";
 import Logistics from "../../models/logistics/logisticsModel.js";
 import Store from "../../models/stores/sellerModel.js";
 import User from "../../models/buyer/userModel.js";
+import Farm from "../../models/farms/farmerModel.js";
 
 import Email from "../../utils/email.js";
 
@@ -11,6 +12,7 @@ const db = {
   user: User,
   store: Store,
   logistics: Logistics,
+  farm: Farm,
 };
 
 const userTypes = ["farm", "user", "store"];
