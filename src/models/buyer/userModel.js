@@ -23,9 +23,18 @@ const userSchema = mongoose.Schema(
     avatar: {
       type: String,
     },
+    type: {
+      type: String,
+    },
     password: {
       type: String,
       required: true,
+    },
+    token: {
+      type: String,
+    },
+    tokenExpire: {
+      type: Date,
     },
   },
   {

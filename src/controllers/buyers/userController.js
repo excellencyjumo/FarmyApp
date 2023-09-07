@@ -3,9 +3,10 @@ import User from "../../models/buyer/userModel.js";
 import generateToken from "../../utils/generateUserToken.js";
 import cloudinary from "../../utils/cloudinary.js";
 
-// @desc    Auth user & get token
-// @route   POST /api/users/auth
-// @access  Public
+import AppError from "../../utils/error.js";
+// import { ResetPasswordAuth } from "../auth.js";
+
+// Login User
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -14,151 +15,110 @@ const authUser = asyncHandler(async (req, res) => {
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
 
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      phoneNumber: user.phoneNumber,
+    user.password = undefined;
+
+    return res.status(200).json({
+      status: "success",
+      message: "user successfully logged in",
+      data: user,
     });
   } else {
-    res.status(401);
-    throw new Error("Invalid email or password");
+    return next(new AppError("invalid email or password", 401));
   }
 });
 
-// @desc    Register a new user
-// @route   POST /api/users
-// @access  Public
-const registerUser = asyncHandler(async (req, res) => {
+// Registering a new customer
+const registerUser = asyncHandler(async (req, res, next) => {
   const { name, username, phoneNumber, email, password } = req.body;
-  // const avatar = req.file;
+  let avatar;
 
-  const userExists = await User.findOne({ email });
+  const emailExists = await User.findOne({ email });
+  const passExists = await User.findOne({ phoneNumber });
 
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
+  if (emailExists) {
+    return next(new AppError("user credential already exists", 409));
   }
-  // const result = await cloudinary(req.file.path);
-  // avatar = result.secure_url;
+  if (phoneNumber && passExists) {
+    return next(new AppError("user credential already exists", 409));
+  }
+
   if (req.file) {
-    const avatar = (await cloudinary(req.file.path)).secure_url;
-    const user = await User.create({
-      avatar,
-      name,
-      username,
-      phoneNumber,
-      email,
-      password,
-    });
-
-    if (user) {
-      generateToken(res, user._id);
-
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-        phoneNumber: user.phoneNumber,
-      });
-    } else {
-      res.status(400);
-      throw new Error("Invalid user data");
-    }
-  } else {
-    const user = await User.create({
-      name,
-      username,
-      phoneNumber,
-      email,
-      password,
-    });
-
-    if (user) {
-      generateToken(res, user._id);
-
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      });
-    } else {
-      res.status(400);
-      throw new Error("Invalid user data");
-    }
+    avatar = (await cloudinary(req.file.path)).secure_url;
   }
+
+  const user = await User.create({
+    avatar,
+    name,
+    username,
+    phoneNumber,
+    email,
+    password,
+  });
+  generateToken(res, user._id);
+  return res.status(201).json({
+    status: "created",
+    message: "User successfully created",
+    data: user,
+  });
 });
 
-// @desc    Logout user / clear cookie
-// @route   POST /api/users/logout
-// @access  Public
+// User Logout controller
 const logoutUser = (req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({ message: "Logged out successfully" });
+  return res
+    .status(200)
+    .json({ status: "success", message: "Logged out successfully" });
 };
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
+// Get user data
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const data = await User.findById(req.user._id);
 
   if (user) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      username: user.username,
-      avatar: user.avatar,
+    return res.status(200).json({
+      status: "success",
+      message: "users data successfully fetched",
+      data,
     });
   } else {
-    res.status(404);
-    throw new Error("User not found");
+    return next(new AppError("user not found", 404));
   }
 });
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
+// Update user data
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+  !user && next(new AppError("user data not found", 404));
 
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.username = req.body.username;
-    if (req.file) {
-      const result = await cloudinary(req.file.path);
-      farm.avatar = result.secure_url;
-    }
+  if (!req.body.password)
+    return next(
+      new AppError(
+        "Use the designated endpoint for passwore updating for this action",
+        401
+      )
+    );
 
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
-
-    const updatedUser = await user.save();
-
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      username: updatedUser.username,
-      email: updatedUser.email,
-      phoneNumber: user.phoneNumber,
-      username: user.username,
-      avatar: updatedUser.avatar,
-    });
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+  user.name = req.body.name || user.name;
+  user.email = req.body.email || user.email;
+  user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+  user.username = req.body.username;
+  if (req.file) {
+    const result = await cloudinary(req.file.path);
+    user.avatar = result.secure_url;
   }
+
+  const data = await user.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "user profile successfully updated",
+    data,
+  });
 });
+
 export {
   authUser,
   registerUser,

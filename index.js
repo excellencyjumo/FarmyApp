@@ -17,6 +17,7 @@ import storeRoutes from "./src/routes/stores/storeRoutes.js";
 import waitlistRoutes from "./src/routes/waitlist.js";
 import storeCartRoute from "./src/routes/cart/store.js";
 import farmCartRoute from "./src/routes/cart/farm.js";
+import AuthRoute from "./src/routes/auth.js";
 // const __filename = fileURLToPath(import.meta.url);
 
 // const __dirname = path.dirname(__filename);
@@ -30,11 +31,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-mongoose
-  .connect(DB, {
-    serverSelectionTimeoutMS: 5000,
-  })
-  .catch((err) => console.log(err));
+mongoose.connect(DB).catch((err) => console.log(err));
 
 const app = express();
 app.use(
@@ -63,7 +60,7 @@ app.use("/api/v1/farmproducts", farmProductRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/waitlist", waitlistRoutes);
 app.use("/api/v1/store", storeRoutes);
-r;
+app.use("/api/v1/auth", AuthRoute);
 
 app.use("/api/v1/storeproducts", storeProductRoute);
 app.use(notFound);

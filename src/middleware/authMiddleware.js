@@ -5,6 +5,8 @@ import Farm from "../models/farms/farmerModel.js";
 import Store from "../models/stores/sellerModel.js";
 import Logistics from "../models/logistics/logisticsModel.js";
 
+import AppError from "../utils/error.js";
+
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -59,8 +61,9 @@ const protect = asyncHandler(async (req, res, next) => {
       }
     }
   } else {
-    res.status(401);
-    throw new Error("Not authorized, no token");
+    return next(
+      new AppError("User not authorized to perform this action", 401)
+    );
   }
 });
 

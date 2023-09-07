@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Cart from "../../models/cart.js";
+import AppError from "../../utils/error.js";
 
 export const AddToCart = (Model, type) => {
   return asyncHandler(async (req, res, next) => {
@@ -12,7 +13,7 @@ export const AddToCart = (Model, type) => {
     const product = await Model.findById(productId);
 
     if (!product) {
-      return next(new Error("This product is not available"));
+      return next(new AppError("This product is not available", 401));
     }
 
     if (req.body.quantity > product.availableQuantity) {
@@ -25,7 +26,7 @@ export const AddToCart = (Model, type) => {
 
     const cart = await Cart.findOne({ productId });
     if (cart) {
-      return next(new Error("This item has aleady been added to cart"));
+      return next(new AppError("This item has aleady been added to cart", 401));
     }
 
     const response = await Cart.create({

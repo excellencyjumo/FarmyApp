@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const logisticsSchema = mongoose.Schema(
   {
@@ -8,12 +8,12 @@ const logisticsSchema = mongoose.Schema(
       required: true,
     },
     logisticsAddress: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -21,15 +21,15 @@ const logisticsSchema = mongoose.Schema(
       unique: true,
     },
     username: {
-        type: String,
-        unique:true
+      type: String,
+      unique: true,
     },
     phoneNumber: {
-        type: String,
-        unique: true
+      type: String,
+      unique: true,
     },
     avatar: {
-      type: String
+      type: String,
     },
     password: {
       type: String,
@@ -47,8 +47,8 @@ logisticsSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 // Encrypt password using bcrypt
-logisticsSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+logisticsSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -56,6 +56,6 @@ logisticsSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Logistics = mongoose.model('Logistics', logisticsSchema);
+const Logistics = mongoose.model("Logistics", logisticsSchema);
 
 export default Logistics;

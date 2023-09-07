@@ -6,8 +6,8 @@ import uploadToCloudinary from "../../utils/cloudinary.js";
 import Store from "../../models/stores/sellerModel.js";
 import slugify from "slugify";
 const getAllProducts = asyncHandler(async (req, res) => {
-  const page = Number(req.query.pageNumber) || 1;
-  const pageSize = Number(req.query.pageSize) || 24;
+  const page = +req.query.pageNumber || 1;
+  const pageSize = +req.query.pageSize || 24;
 
   const keyword = req.query.keyword
     ? {
