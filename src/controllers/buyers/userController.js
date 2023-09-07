@@ -1,3 +1,4 @@
+
 import asyncHandler from "express-async-handler";
 import User from "../../models/buyer/userModel.js";
 import generateToken from "../../utils/generateUserToken.js";
@@ -13,7 +14,7 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
+    const token = generateToken(res, user._id);
 
     user.password = undefined;
 
@@ -60,6 +61,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     message: "User successfully created",
     data: user,
   });
+
+
 });
 
 // User Logout controller
