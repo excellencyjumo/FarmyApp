@@ -17,7 +17,7 @@ import storeRoutes from "./src/routes/stores/storeRoutes.js";
 import waitlistRoutes from "./src/routes/waitlist.js";
 import storeCartRoute from "./src/routes/cart/store.js";
 import farmCartRoute from "./src/routes/cart/farm.js";
-import AuthRoute from "./src/routes/auth.js
+import authRoute from "./src/routes/auth.js
 import chatServer from './chatServer.js';
 import logisticsRoutes from './src/routes/logistics/logisticsRoutes.js';
 
@@ -65,7 +65,7 @@ app.use("/api/v1/farmproducts", farmProductRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/waitlist", waitlistRoutes);
 app.use("/api/v1/store", storeRoutes);
-app.use("/api/v1/auth", AuthRoute);
+app.use("/api/v1/auth", authRoute);
 app.use('/api/v1/logistics', logisticsRoutes);
 
 
