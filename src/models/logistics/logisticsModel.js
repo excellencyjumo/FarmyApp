@@ -35,6 +35,12 @@ const logisticsSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    token: {
+      type: String,
+    },
+    tokenExpire: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
