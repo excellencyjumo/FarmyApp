@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const farmSchema = mongoose.Schema(
   {
@@ -28,6 +28,12 @@ const farmSchema = mongoose.Schema(
       type: String,
       unique: true,
     },
+    token: {
+      type: String,
+    },
+    tokenExpire: {
+      type: Date,
+    },
     avatar: {
       type: String,
     },
@@ -48,15 +54,6 @@ const farmSchema = mongoose.Schema(
     linkedinID: {
       type: String,
     },
-    type: {
-      type: String,
-      required: true,
-      default: 'farm',
-    },
-    currentSocketId: {
-      type: String,
-      required: false,
-    },
   },
   {
     timestamps: true,
@@ -69,8 +66,8 @@ farmSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 // Encrypt password using bcrypt
-farmSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+farmSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -78,6 +75,6 @@ farmSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Farm = mongoose.model('Farm', farmSchema);
+const Farm = mongoose.model("Farm", farmSchema);
 
 export default Farm;

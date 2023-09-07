@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
-import asyncHandler from 'express-async-handler';
-import Logistics from '../models/logistics/logisticsModel.js';
+import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
+import Logistics from "../models/logistics/logisticsModel.js";
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -11,17 +11,19 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.logistics = await Logistics.findById(decoded.logisticsId).select('-password');
+      req.logistics = await Logistics.findById(decoded.logisticsId).select(
+        "-password"
+      );
 
       next();
     } catch (error) {
       console.error(error);
       res.status(401);
-      throw new Error('Not authorized, token failed');
+      throw new Error("Not authorized, token failed");
     }
   } else {
     res.status(401);
-    throw new Error('Not authorized, no token');
+    throw new Error("Not authorized, no token");
   }
 });
 

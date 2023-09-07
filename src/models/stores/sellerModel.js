@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const storeSchema = mongoose.Schema(
   {
@@ -73,8 +73,8 @@ storeSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 // Encrypt password using bcrypt
-storeSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+storeSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -82,6 +82,6 @@ storeSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const Store = mongoose.model('Store', storeSchema);
+const Store = mongoose.model("Store", storeSchema);
 
 export default Store;

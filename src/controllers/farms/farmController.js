@@ -1,8 +1,8 @@
-import asyncHandler from 'express-async-handler';
-import Farm from '../../models/farms/farmerModel.js';
-import uploadToCloudinary from '../../utils/cloudinary.js';
-import FarmProduct from '../../models/farms/farmProductModel.js';
-import generateToken from '../../utils/generateFarmToken.js';
+import asyncHandler from "express-async-handler";
+import Farm from "../../models/farms/farmerModel.js";
+import uploadToCloudinary from "../../utils/cloudinary.js";
+import FarmProduct from "../../models/farms/farmProductModel.js";
+import generateToken from "../../utils/generateFarmToken.js";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -13,8 +13,10 @@ const authFarm = asyncHandler(async (req, res) => {
   const farm = await Farm.findOne({ email });
 
   if (farm && (await farm.matchPassword(password))) {
-    const token = generateToken(res, farm._id);
-    res.status(200).json({
+    generateToken(res, farm._id);
+    let token = req.cookies.jwt;
+
+    res.json({
       _id: farm._id,
       farmName: farm.name,
       email: farm.email,
@@ -23,12 +25,10 @@ const authFarm = asyncHandler(async (req, res) => {
       avatar: farm.avatar,
       city: farm.city,
       token,
-      username: farm.username,
-      type: farm.type
     });
   } else {
     res.status(401);
-    throw new Error('Invalid email or password');
+    throw new Error("Invalid email or password");
   }
 });
 
@@ -50,7 +50,7 @@ const registerFarm = asyncHandler(async (req, res) => {
 
   if (farmExists) {
     res.status(400);
-    throw new Error('Farm Name already exists');
+    throw new Error("Farm Name already exists");
   }
   if (req.file) {
     const result = await uploadToCloudinary(req.file.path);
@@ -81,7 +81,7 @@ const registerFarm = asyncHandler(async (req, res) => {
       });
     } else {
       res.status(400);
-      throw new Error('Invalid Farm data');
+      throw new Error("Invalid Farm data");
     }
   } else {
     const farm = await new Farm({
@@ -108,7 +108,7 @@ const registerFarm = asyncHandler(async (req, res) => {
       });
     } else {
       res.status(400);
-      throw new Error('Invalid Farm data');
+      throw new Error("Invalid Farm data");
     }
   }
 });
@@ -117,11 +117,11 @@ const registerFarm = asyncHandler(async (req, res) => {
 // @route   POST /api/farm/logout
 // @access  Public
 const logoutFarm = (req, res) => {
-  res.cookie('jwt', '', {
+  res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
 // @desc    Get farm profile
@@ -143,7 +143,7 @@ const getFarmProfile = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error('Farm not found');
+    throw new Error("Farm not found");
   }
 });
 
@@ -182,7 +182,7 @@ const updateFarmProfile = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error('Farm not found');
+    throw new Error("Farm not found");
   }
 });
 
