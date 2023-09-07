@@ -1,13 +1,13 @@
-import { Server, Socket } from 'socket.io';
-import http from 'http';
-import * as ObjectId from 'mongodb';
-import jwt from 'jsonwebtoken';
-import Room from './src/models/rooms.js';
-import User from './src/models/buyer/userModel.js';
-import Logistics from './src/models/logistics/logisticsModel.js';
-import Store from './src/models/stores/sellerModel.js';
-import Farm from './src/models/farms/farmerModel.js';
-import Chat from './src/models/chats.js';
+import { Server, Socket } from "socket.io";
+import http from "http";
+import * as ObjectId from "mongodb";
+import jwt from "jsonwebtoken";
+import Room from "./src/models/rooms.js";
+import User from "./src/models/buyer/userModel.js";
+import Logistics from "./src/models/logistics/logisticsModel.js";
+import Store from "./src/models/stores/sellerModel.js";
+import Farm from "./src/models/farms/farmerModel.js";
+import Chat from "./src/models/chats.js";
 
 var ObjectID = ObjectId.ObjectId;
 const chatServer = function (app) {
@@ -16,8 +16,8 @@ const chatServer = function (app) {
   const port = +process.env.SOCKET_PORT;
   const io = new Server(server, {
     cors: {
-      origin: '*',
-      methods: ['GET', 'POST'],
+      origin: "*",
+      methods: ["GET", "POST"],
       credentials: true,
     },
   });
@@ -39,7 +39,7 @@ const chatServer = function (app) {
 
   io.use(function (socket, next) {
     if (!socket.handshake.query || !socket.handshake.query.token) {
-      socket.emit('not-logged-in');
+      socket.emit("not-logged-in");
       return next();
     }
 
@@ -47,7 +47,7 @@ const chatServer = function (app) {
 
     jwt.verify(token, process.env.JWT_SECRET, async function (err, decoded) {
       if (err) {
-        socket.emit('auth-error');
+        socket.emit("auth-error");
         return next();
       }
 
@@ -56,28 +56,28 @@ const chatServer = function (app) {
           return await User.findOneAndUpdate(
             { _id: id },
             { currentSocketId: socket.id },
-            { returnDocument: 'after' }
+            { returnDocument: "after" }
           );
         },
         logistics: async (id) => {
           return await Logistics.findOneAndUpdate(
             { _id: id },
             { currentSocketId: socket.id },
-            { returnDocument: 'after' }
+            { returnDocument: "after" }
           );
         },
         store: async (id) => {
           return await Store.findOneAndUpdate(
             { _id: id },
             { currentSocketId: socket.id },
-            { returnDocument: 'after' }
+            { returnDocument: "after" }
           );
         },
         farm: async (id) => {
           return await Farm.findOneAndUpdate(
             { _id: id },
             { currentSocketId: socket.id },
-            { returnDocument: 'after' }
+            { returnDocument: "after" }
           );
         },
       };
@@ -109,11 +109,11 @@ const chatServer = function (app) {
     });
   });
 
-  io.on('connection', function (socket) {
-    socket.on('joinRoom', (roomId) => {
+  io.on("connection", function (socket) {
+    socket.on("joinRoom", (roomId) => {
       socket.join(roomId);
     });
-    socket.on('get-chats', async (roomId) => {
+    socket.on("get-chats", async (roomId) => {
       const chats = await Chat.find({ room: roomId }).sort({ createAt: 1 });
 
       if (chats[0]) {
@@ -121,10 +121,10 @@ const chatServer = function (app) {
         chats[0].from = await clientDB[chats[0].fromType](chats[0].from);
       }
 
-      socket.emit('retrieve-chats', chats);
+      socket.emit("retrieve-chats", chats);
     });
 
-    socket.on('send-message', async (chat) => {
+    socket.on("send-message", async (chat) => {
       let room;
       let roomId;
       if (!chat.roomId?.trim()) {
@@ -182,29 +182,29 @@ const chatServer = function (app) {
       newChat.from = await clientDB[newChat.fromType](newChat.from);
       newChat.to = await clientDB[newChat.toType](newChat.to);
 
-      socket.broadcast.emit('retrieve-message', newChat);
+      socket.broadcast.emit("retrieve-message", newChat);
     });
 
-    socket.on('get-client', async (object) => {
+    socket.on("get-client", async (object) => {
       const clientDB = {
         user: async (username) => {
           return await User.findOne({
-            username: { $regex: new RegExp(username, 'i') },
+            username: { $regex: new RegExp(username, "i") },
           });
         },
         logistics: async (username) => {
           return await Logistics.findOne({
-            username: { $regex: new RegExp(username, 'i') },
+            username: { $regex: new RegExp(username, "i") },
           });
         },
         store: async (username) => {
           return await Store.findOne({
-            username: { $regex: new RegExp(username, 'i') },
+            username: { $regex: new RegExp(username, "i") },
           });
         },
         farm: async (username) => {
           return await Farm.findOne({
-            username: { $regex: new RegExp(username, 'i') },
+            username: { $regex: new RegExp(username, "i") },
           });
         },
       };
@@ -214,7 +214,7 @@ const chatServer = function (app) {
       const client = await clientDB[clientType](clientUserName);
 
       if (!client) {
-        io.to(socketId).emit('no-client-error', `${clientType}`);
+        io.to(socketId).emit("no-client-error", `${clientType}`);
         return;
       }
 
@@ -225,10 +225,10 @@ const chatServer = function (app) {
         ],
       });
 
-      io.to(socketId).emit('client-retrieved', room?._id, client);
+      io.to(socketId).emit("client-retrieved", room?._id, client);
     });
 
-    socket.on('create-room', async ({ user1, user2, socketId, text }) => {
+    socket.on("create-room", async ({ user1, user2, socketId, text }) => {
       let room = new Room({
         user1: user1._id,
         user2: user2._id,
@@ -241,7 +241,7 @@ const chatServer = function (app) {
       room.user1 = { ...user1 };
       room.user2 = { ...user2 };
 
-      io.to(socketId).emit('render-newly-created-room', room, text);
+      io.to(socketId).emit("render-newly-created-room", room, text);
     });
   });
 

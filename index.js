@@ -67,7 +67,7 @@ app.use(express.json());
 // app.use(express.urlencoded())
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+// app.listen(port, () => console.log(`Server started on port ${port}`));
 
 chatServer(app);
-routes(app); // why this?
+// routes(app); // why this?
