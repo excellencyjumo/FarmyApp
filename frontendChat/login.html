@@ -1,88 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+      integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>ChatCord App</title>
+  </head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
-            integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
-        <link rel="stylesheet" href="style.css" />
-        <title>ChatCord App</title>
-    </head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"></script>
+  <body>
+    <div class="join-container">
+      <header class="join-header">
+        <h1><i class="fas fa-smile"></i> Chat Sample</h1>
+      </header>
+      <main class="join-main">
+        <form id="login-form">
+          <div class="form-control">
+            <label for="email">email</label>
+            <input
+              type="text"
+              name="email"
+              id="username"
+              placeholder="Enter email..."
+              required
+            />
+          </div>
+          <div class="form-control">
+            <label for="password">password</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Enter password..."
+              required
+            />
+          </div>
+          <div class="form-control">
+            <label for="Room">Client type</label>
+            <select name="room" id="room">
+              <option value="logistics">logistics</option>
+              <option value="user">user</option>
+              <option value="store">store</option>
+              <option value="farm">farm</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">Login</button>
+        </form>
+      </main>
+    </div>
 
+    <script>
+      if (localStorage.getItem("token")) window.location.href = "chat.html";
+    </script>
+    <script defer>
+      document.getElementById("login-form").onsubmit = async function (e) {
+        e.preventDefault();
+        const email = document
+          .getElementById("username")
+          .value?.toLowerCase()
+          ?.trim();
 
-    <body>
-        <div class="join-container">
-            <header class="join-header">
-                <h1><i class="fas fa-smile"></i> Chat Sample</h1>
-            </header>
-            <main class="join-main">
-                <form id="login-form">
-                    <div class="form-control">
-                        <label for="email">email</label>
-                        <input type="text" name="email" id="username" placeholder="Enter email..." required />
-                    </div>
-                    <div class="form-control">
-                        <label for="password">password</label>
-                        <input type="password" name="password" id="password" placeholder="Enter password..." required />
-                    </div>
-                    <div class="form-control">
-                        <label for="Room">Client type</label>
-                        <select name="room" id="room">
-                            <option value="logistics">logistics</option>
-                            <option value="user">user</option>
-                            <option value="store">store</option>
-                            <option value="farm">farm</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn">Login</button>
-                </form>
-            </main>
-        </div>
+        const password = document
+          .getElementById("password")
+          .value?.toLowerCase()
+          ?.trim();
 
+        const clientType = document
+          .getElementById("room")
+          .value?.toLowerCase()
+          ?.trim();
 
-        <script>
-            if (localStorage.getItem('token')) window.location.href = 'chat.html'
+        const sendLoginRequest = async function (clientType, email, password) {
+          try {
+            const baseUrl = "http://127.0.0.1:3500/api/v1";
 
-        </script>
-        <script defer>
-            document.getElementById('login-form').onsubmit = async function (e) {
-                e.preventDefault()
-                const email = document.getElementById('username').value?.toLowerCase()?.trim()
+            const res = await axios.post(`${baseUrl}/${clientType}/auth`, {
+              email,
+              password,
+            });
 
-                const password = document.getElementById('password').value?.toLowerCase()?.trim()
-
-                const clientType = document.getElementById('room').value?.toLowerCase()?.trim()
-
-
-                const sendLoginRequest = async function (clientType, email, password) {
-                    try {
-                        const baseUrl = "http://127.0.0.1:3500/api/v1"
-
-                        const res = await axios.post(`${baseUrl}/${clientType}/auth`, { email, password })
-
-                        if (res.status !== 200) {
-                            alert(`Error logging in: ${res.message}`)
-                            return
-                        }
-                        localStorage.setItem('token', res.data.token)
-                        window.location.href = 'chat.html'
-                    } catch (error) {
-                        console.log(error)
-                        localStorage.removeItem('token')
-                        alert(`Error logging in: ${error.response.data.message}`)
-
-                    }
-
-                }
-
-                await sendLoginRequest(clientType, email, password)
-
-
+            if (res.status !== 200) {
+              alert(`Error logging in: ${res.message}`);
+              return;
             }
-        </script>
-    </body>
+            localStorage.setItem("token", res.data.token);
+            window.location.href = "chat.html";
+          } catch (error) {
+            console.log(error);
+            localStorage.removeItem("token");
+            alert(`Error logging in: ${error.response.data.message}`);
+          }
+        };
 
+        await sendLoginRequest(clientType, email, password);
+      };
+    </script>
+  </body>
 </html>

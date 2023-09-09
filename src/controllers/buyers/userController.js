@@ -1,34 +1,10 @@
-
 import asyncHandler from "express-async-handler";
 import User from "../../models/buyer/userModel.js";
 import generateToken from "../../utils/generateUserToken.js";
 import cloudinary from "../../utils/cloudinary.js";
 
 import AppError from "../../utils/error.js";
-// import { ResetPasswordAuth } from "../auth.js";
 
-// Login User
-const authUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (user && (await user.matchPassword(password))) {
-    const token = generateToken(res, user._id);
-
-    user.password = undefined;
-
-    return res.status(200).json({
-      status: "success",
-      message: "user successfully logged in",
-      data: user,
-    });
-  } else {
-    return next(new AppError("invalid email or password", 401));
-  }
-});
-
-// Registering a new customer
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, username, phoneNumber, email, password } = req.body;
   let avatar;
@@ -61,34 +37,6 @@ const registerUser = asyncHandler(async (req, res, next) => {
     message: "User successfully created",
     data: user,
   });
-
-
-});
-
-// User Logout controller
-const logoutUser = (req, res) => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
-  return res
-    .status(200)
-    .json({ status: "success", message: "Logged out successfully" });
-};
-
-// Get user data
-const getUserProfile = asyncHandler(async (req, res) => {
-  const data = await User.findById(req.user._id);
-
-  if (user) {
-    return res.status(200).json({
-      status: "success",
-      message: "users data successfully fetched",
-      data,
-    });
-  } else {
-    return next(new AppError("user not found", 404));
-  }
 });
 
 // Update user data
@@ -122,10 +70,4 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
-export {
-  authUser,
-  registerUser,
-  logoutUser,
-  getUserProfile,
-  updateUserProfile,
-};
+export { registerUser, updateUserProfile };

@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import User from "../models/buyer/userModel.js";
-import Farm from "../models/farms/farmerModel.js";
-import Store from "../models/stores/sellerModel.js";
-import Logistics from "../models/logistics/logisticsModel.js";
+
+import { db } from "../utils/model.js";
 
 import AppError from "../utils/error.js";
 
@@ -12,59 +10,15 @@ const protect = asyncHandler(async (req, res, next) => {
 
   token = req.cookies.jwt;
 
-  if (token) {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  !token &&
+    next(new AppError("User not authorized to perform this action", 401));
 
-    console.log(decoded);
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (decoded.userId) {
-      try {
-        req.user = await User.findById(decoded.userId).select("-password");
-        next();
-      } catch (error) {
-        console.error(error);
-        res.status(401);
-        throw new Error("Not authorized, token failed");
-      }
-    }
-    if (decoded.farmId) {
-      try {
-        req.user = await Farm.findById(decoded.farmId).select("-password");
-        next();
-      } catch (error) {
-        console.error(error);
-        res.status(401);
-        throw new Error("Not authorized, token failed");
-      }
-    }
-    if (decoded.storId) {
-      try {
-        req.user = await Store.findById(decoded.storeId).select("-password");
-        next();
-      } catch (error) {
-        console.error(error);
-        res.status(401);
-        throw new Error("Not authorized, token failed");
-      }
-    }
+  const user = await db[decoded.type].findById(decoded.id).select("-password");
 
-    if (decoded.logisticsId) {
-      try {
-        req.user = await Logistics.findById(decoded.logisticsId).select(
-          "-password"
-        );
-        next();
-      } catch (error) {
-        console.error(error);
-        res.status(401);
-        throw new Error("Not authorized, token failed");
-      }
-    }
-  } else {
-    return next(
-      new AppError("User not authorized to perform this action", 401)
-    );
-  }
+  req.user = user;
+  next();
 });
 
 export { protect };

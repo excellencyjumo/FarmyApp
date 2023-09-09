@@ -1,22 +1,16 @@
-import express from 'express';
+import express from "express";
 import {
-    authFarm,
-    registerFarm,
-    logoutFarm,
-    getFarmProfile,
-    updateFarmProfile
-} from '../../controllers/farms/farmController.js';
-import upload from '../../utils/multer.js';
-import { farmer } from '../../middleware/farmAuthMiddleware.js';
+  registerFarm,
+  updateFarmProfile,
+} from "../../controllers/farms/farmController.js";
+import upload from "../../utils/multer.js";
+import { protect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post('/', upload.single('avatar'), registerFarm);
-router.post('/auth', authFarm);
-router.post('/logout', logoutFarm);
-router
-  .route('/profile')
-  .get(farmer, getFarmProfile)
-  .put(farmer, upload.single('avatar'), updateFarmProfile);
+router.post("/", upload.single("avatar"), registerFarm);
+
+router.use(protect);
+router.route("/profile").put(upload.single("avatar"), updateFarmProfile);
 
 export default router;

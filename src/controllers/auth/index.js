@@ -1,21 +1,10 @@
 import asyncHandler from "express-async-handler";
 import AppError from "../../utils/error.js";
 
-import Logistics from "../../models/logistics/logisticsModel.js";
-import Store from "../../models/stores/sellerModel.js";
-import User from "../../models/buyer/userModel.js";
-import Farm from "../../models/farms/farmerModel.js";
+import { db, userTypes, checkUserType } from "../../utils/model.js";
 
 import Email from "../../utils/email.js";
-
-const db = {
-  user: User,
-  store: Store,
-  logistics: Logistics,
-  farm: Farm,
-};
-
-const userTypes = ["farm", "user", "store"];
+import generateToken from "../../utils/generate.js";
 
 const generateVerificationCode = () => {
   const min = 100000;
@@ -24,6 +13,40 @@ const generateVerificationCode = () => {
 
   return verificationCode.toString();
 };
+
+export const LoginUser = asyncHandler(async (req, res, next) => {
+  const { type, password, email } = req.body;
+
+  checkUserType(type, req, next);
+
+  const user = await db[type].findOne({ email, type });
+
+  (!email || !password) &&
+    next(new AppError("The email and password is required", 401));
+
+  !user && next(new AppError("invalid user credential", 422));
+
+  !(await user.matchPassword(password)) &&
+    next(new AppError("invalid user crendential...", 422));
+
+  generateToken(res, user._id, type);
+
+  user.password = undefined;
+
+  return res.status(200).json({
+    status: "success",
+    message: "user successfully created",
+    data: user,
+  });
+});
+
+export const Logout = asyncHandler(async (req, res, next) => {
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
+});
 
 export const RequestToken = asyncHandler(async (req, res, next) => {
   const { email, type } = req.query;
@@ -96,13 +119,7 @@ export const ResetPassword = asyncHandler(async (req, res, next) => {
     return next(
       new AppError("Provide both the new password and your reset token", 401)
     );
-  if (!type || !userTypes.includes(type))
-    return next(
-      new AppError(
-        "Please provide a valid  user type [either farm, store or logistics]",
-        401
-      )
-    );
+  checkUserType(type, req, next);
 
   const data = await db[type].findOne({ token });
 
