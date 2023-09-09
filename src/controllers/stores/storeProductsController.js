@@ -334,6 +334,55 @@ const getTopStoreProducts = asyncHandler(async (req, res) => {
   const topProducts = await StoreProduct.find({}).sort({ rating: -1 }).limit(4);
   res.json(topProducts);
 });
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the Earth in kilometers
+  const dLat = (lat2 - lat1) * (Math.PI / 180); // Latitude difference in radians
+  const dLon = (lon2 - lon1) * (Math.PI / 180); // Longitude difference in radians
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  const distance = R * c; // Distance in kilometers
+  return distance;
+}
+
+// Controller function to get store products sorted by location
+const getStoreProductsByLocation = async (req, res) => {
+  try {
+    const { userLocation } = req.body; // User's location as { lat, lon }
+    
+    // Validate userLocation (latitude and longitude are required)
+    if (!userLocation || !userLocation.lat || !userLocation.lon) {
+      return res.status(400).json({ error: 'Invalid user location' });
+    }
+
+    // Find all store products and calculate the distance for each
+    const storeProducts = await StoreProduct.find({});
+    const sortedStoreProducts = storeProducts.map((product) => {
+      const distance = calculateDistance(
+        userLocation.lat,
+        userLocation.lon,
+        product.coordinates.coordinates[1], // Latitude
+        product.coordinates.coordinates[0]  // Longitude
+      );
+      return { ...product.toObject(), distance };
+    });
+
+    // Sort store products by distance in ascending order
+    sortedStoreProducts.sort((a, b) => a.distance - b.distance);
+
+    res.json(sortedStoreProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 export {
   getAllCategories,
@@ -350,4 +399,5 @@ export {
   getTopStoreProducts,
   deleteStoreCategory,
   getStoreProductBySlug,
+  getStoreProductsByLocation
 };
