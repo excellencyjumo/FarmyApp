@@ -14,6 +14,7 @@ import {
   getTopStoreProducts,
   deleteStoreCategory,
   getStoreProductBySlug,
+  getStoreProductsByLocation
 } from "../../controllers/stores/storeProductsController.js";
 
 import upload from "../../utils/multer.js";
@@ -44,6 +45,7 @@ router
   .post(protect, createStoreCategory);
 
 router.route("/top").get(getTopStoreProducts);
+router.route("/location").get(getStoreProductsByLocation);
 
 router
   .route("/:id")
