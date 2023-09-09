@@ -48,11 +48,19 @@ const storeSchema = mongoose.Schema(
     type: {
       type: String,
       required: true,
-      default: 'store',
+      default: "store",
     },
     currentSocketId: {
       type: String,
       required: false,
+    },
+    products: {
+      type: [mongoose.ObjectId],
+      ref: "StoreProduct",
+    },
+    categories: {
+      type: [mongoose.ObjectId],
+      ref: "StoreCategory",
     },
     // location: {
     //   type: {

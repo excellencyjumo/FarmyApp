@@ -19,6 +19,7 @@ import farmCartRoute from "./src/routes/cart/farm.js";
 import authRoute from "./src/routes/auth.js";
 import chatServer from "./chatServer.js";
 import logisticsRoutes from "./src/routes/logistics/logisticsRoutes.js";
+import userRoute from "./src/routes/user.js";
 
 dotenv.config({ path: "./config.env" });
 
@@ -51,6 +52,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user/profile", userRoute);
+
 app.use("/api/v1/farm", farmRoutes);
 app.use("/api/v1/storeproducts", storeProductRoute);
 app.use("/api/v1/storeproducts/cart", storeCartRoute);
@@ -59,7 +63,7 @@ app.use("/api/v1/farmproducts", farmProductRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/waitlist", waitlistRoutes);
 app.use("/api/v1/store", storeRoutes);
-app.use("/api/v1/auth", authRoute);
+
 app.use("/api/v1/logistics", logisticsRoutes);
 
 app.use(notFound);

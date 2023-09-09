@@ -4,34 +4,6 @@ import uploadToCloudinary from "../../utils/cloudinary.js";
 import FarmProduct from "../../models/farms/farmProductModel.js";
 import generateToken from "../../utils/generateFarmToken.js";
 
-// @desc    Auth user & get token
-// @route   POST /api/users/auth
-// @access  Public
-const authFarm = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  const farm = await Farm.findOne({ email });
-
-  if (farm && (await farm.matchPassword(password))) {
-    generateToken(res, farm._id);
-    let token = req.cookies.jwt;
-
-    res.json({
-      _id: farm._id,
-      farmName: farm.name,
-      email: farm.email,
-      farmName: farm.farmName,
-      username: farm.username,
-      avatar: farm.avatar,
-      city: farm.city,
-      token,
-    });
-  } else {
-    res.status(401);
-    throw new Error("Invalid email or password");
-  }
-});
-
 // @desc    Register a new farm
 // @route   POST /api/farm
 // @access  Public
@@ -113,17 +85,6 @@ const registerFarm = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Logout farm / clear cookie
-// @route   POST /api/farm/logout
-// @access  Public
-const logoutFarm = (req, res) => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    expires: new Date(0),
-  });
-  res.status(200).json({ message: "Logged out successfully" });
-};
-
 // @desc    Get farm profile
 // @route   GET /api/farm/profile
 // @access  Private
@@ -186,10 +147,4 @@ const updateFarmProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export {
-  authFarm,
-  registerFarm,
-  logoutFarm,
-  getFarmProfile,
-  updateFarmProfile,
-};
+export { registerFarm, getFarmProfile, updateFarmProfile };
