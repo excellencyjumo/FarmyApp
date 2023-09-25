@@ -14,7 +14,7 @@ const initiatePayment = async (req, res) => {
     }).populate('items.product');
 
     if (!order || order.items.length === 0) {
-      return res.status(400).json({ error: 'Order is empty or has already been processed' });
+      return res.status(400).json({ error: 'Order is unavailable or has already been processed' });
     }
 
     // Create a payment request on Paystack
@@ -31,6 +31,12 @@ const initiatePayment = async (req, res) => {
     };
 
     const paymentResponse = await paystackClient.transaction.initialize(paymentData);
+    console.log(paymentResponse);
+
+    if(!paymentResponse.status){
+      return res.status(400).json({message:paymentResponse});
+    }
+    
     // Return the authorization URL and reference for the user to complete the payment
     res.status(201).json({
       authorization_url: paymentResponse.data.authorization_url,

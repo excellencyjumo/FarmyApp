@@ -99,15 +99,15 @@ const deleteItem = async (req, res) => {
 
 
 
-const deleteCart = async(req,res) =>{
-  try{
+const deleteCart = async (req, res) => {
+  try {
     const cart = await Cart.findOne({ user: req.user._id });
-    if(!cart){
-      res.status(400).json({error:"Cart is Unavailable"});
+    if (!cart) {
+      res.status(400).json({ error: "Cart is Unavailable" });
     }
-    res.status(200).json({message:"Cart deleted",data:cart});
+    res.status(200).json({ message: "Cart deleted", data: cart });
   }
-  catch(error){
+  catch (error) {
     console.error(error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
@@ -118,7 +118,7 @@ const placeOrder = async (req, res) => {
     // Check if there are any active (not archived) orders for the user
     const activeOrder = await Order.findOne({
       user: req.user._id,
-      isArchived: false,
+      paymentStatus:"pending"
     });
 
     if (activeOrder) {
@@ -166,15 +166,15 @@ const placeOrder = async (req, res) => {
 };
 
 
-const deleteOrder = async(req,res)=>{
-  try{
-   const order = Order.findOne({user: req.user._id});
-   if(!order){
-    res.status(400).json({error:"Order not Placed yet"});
-   }
-   res.status(200).json({message:"Order deleted",data:order});
+const deleteOrder = async (req, res) => {
+  try {
+    const order = Order.findOne({ user: req.user._id });
+    if (!order) {
+      res.status(400).json({ error: "Order not Placed yet" });
+    }
+    res.status(200).json({ message: "Order deleted", data: order });
   }
-  catch(error){
+  catch (error) {
     console.error(error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
