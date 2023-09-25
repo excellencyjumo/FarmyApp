@@ -8,9 +8,10 @@ import { protect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.use(protect);
 
 router.post("/", upload.single("avatar"), registerUser);
+
+router.use(protect);
 
 router
   .route("/profile")

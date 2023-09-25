@@ -19,7 +19,6 @@
   "author": "Abass Olaiya",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cloudinary": "^1.39.0",
@@ -37,6 +36,7 @@
     "nodemailer": "^6.9.5",
     "nodemon": "^2.0.22",
     "path": "^0.12.7",
+    "paystack": "^2.0.1",
     "slugify": "^1.6.6",
     "socket.io": "^4.7.2"
   }

@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import Logistics from "../../models/logistics/logisticsModel.js";
 import cloudinary from "../../utils/cloudinary.js";
 import generateToken from "../../utils/generateLogToken.js";
+import Email from '../../utils/email.js';
+import { Order } from '../../models/Cart/cartOrder.js'
 
 const registerLogistics = asyncHandler(async (req, res) => {
   const {
@@ -50,6 +52,7 @@ const registerLogistics = asyncHandler(async (req, res) => {
     throw new Error("Invalid logistics data");
   }
 });
+
 const updateLogisticsProfile = asyncHandler(async (req, res) => {
   const logistics = await Logistics.findById(req.logistics._id);
 
@@ -79,4 +82,49 @@ const updateLogisticsProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerLogistics, updateLogisticsProfile };
+// Controller function to send orders to logistics companies
+const sendOrderToLogistics = async (req, res) => {
+  try {
+    // Extract order details from the request
+    const { logisticsCompanyId } = req.body;
+    const orderId = req.params.orderId
+    
+    // Find the order
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    // Check if the order is paid
+    if (order.paymentStatus !== 'paid') {
+      return res.status(400).json({ error: 'Order is not paid' });
+    }
+
+    // Find the logistics company by ID
+    const logisticsCompany = await Logistics.findById(logisticsCompanyId);
+
+    if (!logisticsCompany) {
+      return res.status(404).json({ error: 'Logistics company not found' });
+    }
+
+    // Construct an email notification
+    const email = new Email(logisticsCompany.email);
+    const subject = 'New Order Notification';
+    const message = `An order with ID ${orderId} has been placed and is ready for delivery.`;
+
+    // Send the email notification to the logistics company
+    await email.send(subject, message);
+
+    //additional logic to update the order status or perform other actions
+    order.isArchived = true;
+    await order.save();
+
+    res.status(200).json({ message: 'Order sent to logistics company successfully' });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export { registerLogistics, updateLogisticsProfile, sendOrderToLogistics };

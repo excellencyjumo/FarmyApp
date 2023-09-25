@@ -14,8 +14,8 @@ import userRoutes from "./src/routes/customers/userRoutes.js";
 import storeProductRoute from "./src/routes/stores/storeProductRoutes.js";
 import storeRoutes from "./src/routes/stores/storeRoutes.js";
 import waitlistRoutes from "./src/routes/waitlist.js";
-import storeCartRoute from "./src/routes/cart/store.js";
-import farmCartRoute from "./src/routes/cart/farm.js";
+import storeCartRoute from "./src/routes/carts/store.js";
+import farmCartRoute from "./src/routes/carts/farm.js";
 import authRoute from "./src/routes/auth.js";
 import chatServer from "./chatServer.js";
 import logisticsRoutes from "./src/routes/logistics/logisticsRoutes.js";
@@ -54,12 +54,13 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/user/profile", userRoute);
-
+routes(app);
 app.use("/api/v1/farm", farmRoutes);
 app.use("/api/v1/storeproducts", storeProductRoute);
 app.use("/api/v1/storeproducts/cart", storeCartRoute);
 app.use("/api/v1/farmproducts/cart", farmCartRoute);
 app.use("/api/v1/farmproducts", farmProductRoutes);
+console.log("2-----------------2")
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/waitlist", waitlistRoutes);
 app.use("/api/v1/store", storeRoutes);
@@ -67,11 +68,9 @@ app.use("/api/v1/store", storeRoutes);
 app.use("/api/v1/logistics", logisticsRoutes);
 
 app.use(notFound);
-app.use(express.json());
-// app.use(express.urlencoded())
 app.use(errorHandler);
 
-// app.listen(port, () => console.log(`Server started on port ${port}`));
+app.listen(port, () => console.log(`Server started on port ${port}`));
 
-chatServer(app);
+// chatServer(app);
 // routes(app); // why this?

@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+
 class Email {
   constructor(email) {
     this.to = email;

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const { Schema, model } = mongoose;
 
 const logisticsSchema = new Schema({
@@ -15,7 +14,7 @@ const logisticsSchema = new Schema({
       enum: ["Point"],
     },
     coordinates: {
-      type: [Number],
+      type: [Number], 
       index: "2dsphere",
     },
   },

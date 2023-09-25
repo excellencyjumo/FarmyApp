@@ -9,7 +9,6 @@ import {
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = Router();
-
 router.post("/login", LoginUser);
 router.post("/logout", Logout);
 router.post("/update-password", protect, UpdatePassword);

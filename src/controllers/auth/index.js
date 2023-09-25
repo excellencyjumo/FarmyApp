@@ -16,11 +16,13 @@ const generateVerificationCode = () => {
 
 export const LoginUser = asyncHandler(async (req, res, next) => {
   const { type, password, email } = req.body;
-
+  console.log(req.url);
+  console.log("---------------------------------------------");
   checkUserType(type, req, next);
 
-  const user = await db[type].findOne({ email, type });
-
+  const user = await db[type].findOne({ email });
+  console.log(db[type]);
+  console.log(user);
   (!email || !password) &&
     next(new AppError("The email and password is required", 401));
 
